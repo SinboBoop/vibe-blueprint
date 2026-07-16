@@ -8,7 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { PACKAGE_NAME, TOOL_NAMES } from "../../src/constants.js";
 import { MINIMUM_INVARIANTS_BY_FAMILY } from "../../src/invariant-ids.js";
@@ -16,6 +16,7 @@ import { analysis, route } from "../helpers/model-fixtures.js";
 
 const execFileAsync = promisify(execFile);
 const transports: StdioClientTransport[] = [];
+let packedGlobalShape: PackedGlobalShape;
 const EXPECTED_BIN_TARGETS = Object.freeze({
   "vibe-blueprint": "dist/cli.js",
   "foundation-guard": "dist/cli.js",
@@ -48,7 +49,7 @@ async function createPackedGlobalShape(): Promise<PackedGlobalShape> {
   const packed = await execFileAsync(
     "npm",
     ["pack", "--json", "--ignore-scripts", "--pack-destination", packDirectory],
-    { cwd: path.resolve("."), env: { ...process.env, npm_config_offline: "true" } },
+    { cwd: path.resolve(".") },
   );
   const packResult = JSON.parse(packed.stdout) as Array<{
     readonly filename: string;
@@ -62,9 +63,11 @@ async function createPackedGlobalShape(): Promise<PackedGlobalShape> {
     "--global",
     "--prefix", prefix,
     "--ignore-scripts",
-    "--offline",
+    "--prefer-offline",
+    "--no-audit",
+    "--no-fund",
     path.join(packDirectory, artifact.filename),
-  ], { cwd: unrelatedCwd, env: { ...process.env, npm_config_offline: "true" } });
+  ], { cwd: unrelatedCwd });
   const manifest = JSON.parse(await readFile(path.join(packageDirectory, "package.json"), "utf8")) as {
     readonly bin?: Readonly<Record<string, string>>;
   };
@@ -108,8 +111,12 @@ afterEach(async () => {
 });
 
 describe("installed-shape stdio MCP", () => {
+  beforeAll(async () => {
+    packedGlobalShape = await createPackedGlobalShape();
+  }, 60_000);
+
   it("runs both CLI names and both MCP names from the packed bin manifest", async () => {
-    const { installedBins, unrelatedCwd } = await createPackedGlobalShape();
+    const { installedBins, unrelatedCwd } = packedGlobalShape;
     for (const name of ["vibe-blueprint", "foundation-guard"] as const) {
       const help = await execFileAsync(installedBins[name], ["--help"], {
         cwd: unrelatedCwd,
@@ -144,7 +151,7 @@ describe("installed-shape stdio MCP", () => {
   });
 
   it("loads packaged decision resources from a global-like npm pack shape and unrelated cwd", async () => {
-    const { packageDirectory, unrelatedCwd, packedPaths } = await createPackedGlobalShape();
+    const { packageDirectory, unrelatedCwd, packedPaths } = packedGlobalShape;
     expect(packedPaths.has("docs/releases/live-provider-verification.json")).toBe(false);
     expect(packedPaths.has("docs/releases/decision-integrity.md")).toBe(true);
     for (const requiredPath of [
@@ -200,7 +207,7 @@ process.stdout.write(JSON.stringify({
   });
 
   it("uses and deletes pre-rename credentials through installed CLI aliases without revealing them", async () => {
-    const { installedBins, unrelatedCwd } = await createPackedGlobalShape();
+    const { installedBins, unrelatedCwd } = packedGlobalShape;
     const xdgConfigHome = await mkdtemp(path.join(os.tmpdir(), "vibe-blueprint-credential-e2e-"));
     const currentDirectory = path.join(xdgConfigHome, "vibe-blueprint");
     const legacyDirectory = path.join(xdgConfigHome, "foundation-guard");
@@ -246,7 +253,7 @@ process.stdout.write(JSON.stringify({
   });
 
   it("keeps installed CLI Doctor results on stdout with strict requested-check exit semantics", async () => {
-    const { installedCli, packageDirectory, unrelatedCwd } = await createPackedGlobalShape();
+    const { installedCli, packageDirectory, unrelatedCwd } = packedGlobalShape;
     const root = await mkdtemp(path.join(os.tmpdir(), "foundation-cli-doctor-root-"));
     const configDirectory = await mkdtemp(path.join(os.tmpdir(), "foundation-cli-doctor-config-"));
     const relay = createServer((_request, serverResponse) => {
@@ -341,7 +348,7 @@ process.stdout.write(JSON.stringify({
   });
 
   it("runs the opt-in live verifier from the packed installed shape and writes only sanitized metadata", async () => {
-    const { installedCli, unrelatedCwd } = await createPackedGlobalShape();
+    const { installedCli, unrelatedCwd } = packedGlobalShape;
     const configDirectory = await mkdtemp(path.join(os.tmpdir(), "foundation-cli-live-config-"));
     const outputPath = path.join(configDirectory, "release", "live-provider-verification.json");
     const managed = analysis([route("managed_online")]);
