@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://foundation-guard.dev/schemas/foundation.schema.json",
+  "title": "Vibe Blueprint project foundation",
+  "description": "The machine-readable authoritative Vibe Blueprint project foundation state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "revision",
+    "project_summary",
+    "facts",
+    "assumptions",
+    "decisions",
+    "included_capabilities",
+    "excluded_capabilities",
+    "undecided_capabilities",
+    "architecture",
+    "technology_stack",
+    "reassessment_triggers",
+    "risk_state",
+    "protection_coverage",
+    "evidence_checks",
+    "created_at",
+    "updated_at",
+    "source_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project_summary": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "array",
+      "items": {}
+    },
+    "assumptions": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {}
+    },
+    "included_capabilities": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "excluded_capabilities": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "undecided_capabilities": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "architecture": {},
+    "technology_stack": {},
+    "reassessment_triggers": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "risk_state": {},
+    "protection_coverage": {},
+    "evidence_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidenceCheck"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "command", "args"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "package_script_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

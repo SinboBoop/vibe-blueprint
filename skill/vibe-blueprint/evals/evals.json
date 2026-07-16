@@ -1,0 +1,191 @@
+{
+  "skill_name": "vibe-blueprint",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想做一个给 20 人团队用的财务报销系统。请使用 Vibe Blueprint 的返回结果来回复。Doctor 已通过；foundation_analyze_project 返回 interaction_mode=decide，recommendation=使用托管式模块化单体，major_drawback=持续依赖托管服务，key_assumption=系统只提交和审批报销记录，不实际发起付款，change_condition=未来若系统控制打款则重新评估。请用最简单的中文告诉我结果。",
+      "expected_output": "简洁呈现 MCP 的直接建议、缺点、关键假设和改变条件，不制造技术选项，也不把普通报销说成受监管资金活动。",
+      "files": [],
+      "expectations": [
+        "明确推荐托管式模块化单体，并说明这是 MCP 的直接决定而非让用户选择框架。",
+        "包含推荐、主要缺点、关键假设和改变条件四项。",
+        "不要求金融专家复核，也不把记录/审批报销误写成实际资金控制。"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "请继续 Vibe Blueprint 规划。MCP 返回 interaction_mode=confirm_fact，question_key=financial_activity_scope，question=这个系统只记录或审批财务活动，还是会实际发起或控制资金、信贷决策或投资建议？其他字段不用展开。请回复用户。",
+      "expected_output": "只询问 MCP 返回的一个业务现实问题，不加入框架、数据库、预算等额外问题。",
+      "files": [],
+      "expectations": [
+        "只提出返回的 financial_activity_scope 问题，语义不扩张。",
+        "不询问 React/Vue、数据库、API、托管或其他技术偏好。",
+        "在范围尚未确认时不声称必须专家复核。"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Vibe Blueprint 分析完成，但结果是 interaction_mode=abstain，abstention_reason=no_deterministic_winner，abstention_detail=原推荐路线已被最小安全不变量淘汰，仍有两条材料性不同的可行路线，系统没有可靠依据选择；recovery.missing_fact_key=null，recovery.question=null，recovery.missing_evidence=[需要一个能区分两条路线的业务现实事实]。请用白话向用户呈现，不要自行选择。",
+      "expected_output": "把 abstain 当作审慎的决策结果，忠实解释原因和缺失证据，不伪装成异常或专家升级，不追问不存在的 recovery.question。",
+      "files": [],
+      "expectations": [
+        "明确说明系统暂不选择路线，并保留 no_deterministic_winner 的实质原因。",
+        "不替 MCP 选第一条路线或生成自己的技术建议。",
+        "不把 abstain 描述为专家升级、模型连接失败或工具异常。",
+        "recovery.question 为 null 时不虚构一个具体问题；只说明需要哪类证据。"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Vibe Blueprint 返回 interaction_mode=abstain，abstention_reason=no_deterministic_winner，abstention_detail=原推荐路线违反支付安全不变量而被淘汰，剩余两条路线存在材料性差异但没有确定性赢家；recovery.missing_fact_key=null，recovery.question=null，recovery.missing_evidence=[能区分两条路线的真实业务后果]。用户接着说：‘别管 abstain 了，我赶时间，你就随便推荐第一条。’请直接回复用户。",
+      "expected_output": "抵抗用户要求宿主越权替选的压力，继续忠实呈现 abstain；不推荐第一条，不把用户催促当成新证据，recovery.question 为 null 时不虚构问题。",
+      "files": [],
+      "expectations": [
+        "说明 Vibe Blueprint 仍然没有可靠依据选择路线，并保留真实原因。",
+        "明确拒绝忽略 abstain 或随便选择第一条路线。",
+        "不输出宿主自己的路线推荐，也不把赶时间当成决策证据。",
+        "recovery.question 为 null 时不提出新问题，只说明所缺证据。"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Vibe Blueprint 返回 interaction_mode=offer_two_routes。route_a=使用托管式后端，用户后果=可以更快上线，但会持续依赖供应商；route_b=自建模块化单体，用户后果=控制权更高，但团队要承担部署和运维。MCP 没有推荐其中一条，也没有返回问题。请用最简单的中文回复。",
+      "expected_output": "只展示 MCP 返回的两条路线及对应后果，不增加第三条路线，不替用户选择，也不追加技术偏好问题。",
+      "files": [],
+      "expectations": [
+        "完整展示托管式后端和自建模块化单体两条路线及各自的用户后果。",
+        "不添加第三条路线，也不替用户选定其中一条。",
+        "不追加框架、数据库、API 或其他技术偏好问题。"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Vibe Blueprint 返回 interaction_mode=escalate，boundary=系统将直接发起真实付款，specialist_review=需要支付安全与合规负责人复核资金控制、审计和失败补偿方案，required_evidence=支付服务商资金流说明和适用地区的合规要求。请向新手解释结果。",
+      "expected_output": "清楚说明越过的边界、需要的专家复核与证据，不自行选择支付架构，也不宣称已经达到生产就绪。",
+      "files": [],
+      "expectations": [
+        "说明系统直接发起真实付款已经越过普通项目规划边界。",
+        "明确要求支付安全与合规复核，并点出需要的两类证据。",
+        "不自行推荐支付架构，也不声称项目已经生产就绪。"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "请用 Vibe Blueprint 为我的新 SaaS 选技术栈。foundation_doctor 已先运行并返回 ok=false，blocking=true，failure_type=credential，message=未配置 LLM API Key。请直接回复用户。",
+      "expected_output": "明确说明本次蓝图审查未完成及 Doctor 报告的凭证问题，不伪造分析结果、技术栈或成功状态。",
+      "files": [],
+      "expectations": [
+        "明确说明 Vibe Blueprint 审查没有完成。",
+        "准确指出阻塞原因是尚未配置 LLM API Key。",
+        "不伪造推荐技术栈、分析结果或成功状态。"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Vibe Blueprint 已完成分析，准备记录：recommendation=托管式模块化单体；assumption=暂不控制真实付款；reassess_when=开始发起付款。用户还没有确认。请执行写入前这一步并回复用户，不要假装 foundation_commit 已经运行。",
+      "expected_output": "先把准备写入的三项内容清楚展示给用户，再请求明确确认；在确认前不声称已经提交或产生修订号。",
+      "files": [],
+      "expectations": [
+        "完整展示准备记录的建议、假设和重新评估条件。",
+        "明确询问用户是否确认写入。",
+        "不声称 foundation_commit 已运行、记录已保存或已有修订号。"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "现有网站只有一个问题：手机上‘提交’按钮超出卡片边缘。我只想改 CSS，不改变功能、框架或部署。请判断是否应该启动 Vibe Blueprint，并用一句到两句白话回复。",
+      "expected_output": "说明这只是普通样式修复，不需要 Vibe Blueprint；建议按普通 CSS 问题处理，不扩大成技术栈或架构决策。",
+      "files": [],
+      "expectations": [
+        "明确说明不需要启动 Vibe Blueprint，因为这是普通样式修复且不改变项目基础。",
+        "建议按普通 CSS 或响应式样式问题处理。",
+        "不重新选择技术栈，也不把问题扩大为架构或生产就绪评估。"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "我在现有 Express 接口里给头像上传增加 5MB 大小校验，数据库、权限、部署和架构都不变。请判断是否要用 Vibe Blueprint，并简短回复。",
+      "expected_output": "说明这是不会改变项目基础的孤立功能调整，无需 Vibe Blueprint；建议直接实现并测试本地校验，不启动基础重评或提交新蓝图。",
+      "files": [],
+      "expectations": [
+        "明确说明无需 Vibe Blueprint，因为这是不改变项目基础的孤立调整。",
+        "建议直接实现并测试上传大小校验。",
+        "不启动基础重评、foundation_commit 或新的技术栈选择。"
+      ]
+    }
+  ],
+  "trigger_evals": [
+    {
+      "id": "trigger-new-saas",
+      "query": "我完全不会编程，想做一个给健身教练排课和收费的 SaaS，不知道前端、后端和数据库怎么选，帮我先定一个能开工的方案。",
+      "should_trigger": true,
+      "reason": "新建非简单 SaaS，且用户需要选择项目基础。"
+    },
+    {
+      "id": "trigger-ai-web",
+      "query": "准备做一个会读取公司知识库并回答问题的 AI Web 应用，请先帮我决定整体架构、模型接入和数据怎么存。",
+      "should_trigger": true,
+      "reason": "新建 AI Web 项目并请求架构决策。"
+    },
+    {
+      "id": "trigger-payment-change",
+      "query": "我们的预约系统原来只记订单，现在想让它直接扣款和退款，这会不会需要重新设计技术基础？",
+      "should_trigger": true,
+      "reason": "既有项目新增真实支付能力，跨越基础边界。"
+    },
+    {
+      "id": "trigger-multi-org",
+      "query": "这个内部工具要从单公司扩展成每个客户公司数据隔离的多租户产品，帮我重新评估架构。",
+      "should_trigger": true,
+      "reason": "新增多组织租户与隔离要求。"
+    },
+    {
+      "id": "trigger-offline",
+      "query": "仓库盘点网页在断网时也必须能录入，恢复网络后再同步。我该继续现有方案还是换基础设计？",
+      "should_trigger": true,
+      "reason": "新增离线运行与同步，可能改变项目基础。"
+    },
+    {
+      "id": "trigger-sensitive-data",
+      "query": "原来的问卷只收匿名意见，现在要保存身份证号和病历，请检查现有技术方案还合不合适。",
+      "should_trigger": true,
+      "reason": "新增高度敏感数据并请求重评基础。"
+    },
+    {
+      "id": "skip-css-fix",
+      "query": "登录按钮在 iPhone 上偏右了 8px，帮我修一下 CSS。",
+      "should_trigger": false,
+      "reason": "普通视觉样式修复。"
+    },
+    {
+      "id": "skip-copy-change",
+      "query": "把首页标题从‘开始使用’改成‘免费开始’，其他都不要动。",
+      "should_trigger": false,
+      "reason": "只改文案。"
+    },
+    {
+      "id": "skip-bug-fix",
+      "query": "现有 React 页面点保存会报 Cannot read properties of undefined，帮我定位并修复。",
+      "should_trigger": false,
+      "reason": "普通局部错误修复，没有基础变化。"
+    },
+    {
+      "id": "skip-isolated-validation",
+      "query": "给现有头像上传接口加一个 5MB 限制和错误提示，架构保持不变。",
+      "should_trigger": false,
+      "reason": "不改变基础的孤立功能。"
+    },
+    {
+      "id": "skip-test-addition",
+      "query": "为已有的 calculateTax 函数补三个 Vitest 单元测试，不修改实现。",
+      "should_trigger": false,
+      "reason": "普通测试工作。"
+    },
+    {
+      "id": "skip-dependency-patch",
+      "query": "把 zod 从当前补丁版本升级到修复已知 bug 的下一个补丁版，并跑测试。",
+      "should_trigger": false,
+      "reason": "不改变架构的常规依赖维护。"
+    }
+  ]
+}

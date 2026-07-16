@@ -1,0 +1,20 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+.foundation-guard-credentials
+.DS_Store
+npm-debug.log*
+
+# Local brand-selection and roadmap evidence; not part of the public repository.
+docs/brand-candidates/
+docs/brand-review-round-2/
+docs/roadmaps/
+openspec/

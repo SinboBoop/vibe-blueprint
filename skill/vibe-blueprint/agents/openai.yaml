@@ -1,0 +1,11 @@
+interface:
+  display_name: "Vibe Blueprint"
+  short_description: "Turn an idea into a clear technical starting plan"
+  default_prompt: "Use $vibe-blueprint to turn my project idea or foundation-changing requirement into a clear technical blueprint."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "vibe_blueprint"
+      description: "Vibe Blueprint planning, saved decisions, change assessment, and on-demand verification"
+      transport: "stdio"

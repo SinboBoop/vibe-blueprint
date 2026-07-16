@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "families": [
+    {
+      "id": "doctor_missing_credential",
+      "title": "Requested Doctor model check without a credential",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["doctor_missing_credential", "requested_model_diagnostics"],
+      "rationale": "Reproduces the legacy false-success path in which a requested model check was skipped when the credential was absent.",
+      "cases": [{
+        "id": "doctor_missing_credential_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Run Doctor and prove that the configured Foundation model is available.",
+        "input": { "kind": "doctor", "check_model": true, "credential_status": "missing", "probe_outcome": "not_supplied" },
+        "expected": { "interaction_modes": ["not_applicable"], "doctor": { "status": "fail", "reason": "missing_credential", "overall_ok": false }, "required_trace_ids": ["model_connectivity"] }
+      }]
+    },
+    {
+      "id": "doctor_missing_probe",
+      "title": "Requested Doctor model check without a probe",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["doctor_missing_probe", "requested_model_diagnostics"],
+      "rationale": "Reproduces the legacy false-success path in which an unavailable probe was reported as skipped.",
+      "cases": [{
+        "id": "doctor_missing_probe_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Run Doctor with model checking enabled and an installed credential.",
+        "input": { "kind": "doctor", "check_model": true, "credential_status": "configured", "probe_outcome": "not_supplied" },
+        "expected": { "interaction_modes": ["not_applicable"], "doctor": { "status": "fail", "reason": "probe_unavailable", "overall_ok": false }, "required_trace_ids": ["model_connectivity"] }
+      }]
+    },
+    {
+      "id": "ordinary_expense_not_specialist",
+      "title": "Ordinary expense workflow is not specialist financial work",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["ordinary_expense_workflow"],
+      "rationale": "Reproduces broad financial-domain over-escalation for ordinary reimbursement administration.",
+      "cases": [{
+        "id": "ordinary_expense_not_specialist_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Employees upload receipts; managers approve or reject reimbursement requests. The system only records workflow state.",
+        "input": {
+          "kind": "activity",
+          "facts": [
+            { "key": "expense_workflow", "value": true, "certainty": "explicit" },
+            { "key": "controls_funds", "value": false, "certainty": "explicit" }
+          ],
+          "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": true }]
+        },
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["expense_workflow"], "activity_actions": ["normal"], "required_trace_ids": ["expense_artifact", "expense_workflow_action"] }
+      }]
+    },
+    {
+      "id": "critical_security_requires_review",
+      "title": "Critical security action cannot pass broad-domain filtering",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["critical_security", "critical_risk_actions"],
+      "rationale": "Reproduces under-escalation when a critical security assessment uses the security domain.",
+      "cases": [{
+        "id": "critical_security_requires_review_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Build a utility that bypasses access controls and harvests employee credentials.",
+        "input": {
+          "kind": "activity",
+          "facts": [{ "key": "bypass_access_control", "value": true, "certainty": "explicit" }],
+          "risk_assessments": [{ "domain": "security", "severity": "critical", "requires_escalation": true }]
+        },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["critical_security"], "activity_actions": ["specialist_review"], "required_trace_ids": ["critical_security_action"] }
+      }]
+    },
+    {
+      "id": "critical_privacy_requires_review",
+      "title": "Critical privacy action cannot pass broad-domain filtering",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["critical_privacy", "critical_risk_actions"],
+      "rationale": "Reproduces under-escalation when a critical privacy assessment uses the privacy domain.",
+      "cases": [{
+        "id": "critical_privacy_requires_review_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Export the entire customer identity database to an unauthorized third party.",
+        "input": {
+          "kind": "activity",
+          "facts": [{ "key": "unauthorized_bulk_disclosure", "value": true, "certainty": "explicit" }],
+          "risk_assessments": [{ "domain": "privacy", "severity": "critical", "requires_escalation": true }]
+        },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["critical_privacy"], "activity_actions": ["specialist_review"], "required_trace_ids": ["validated_critical_assessment"] }
+      }]
+    },
+    {
+      "id": "eliminated_recommendation_no_positional_fallback",
+      "title": "An eliminated recommendation leaves no positional winner",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["eliminated_recommendation"],
+      "rationale": "Reproduces the array-order fallback when the model recommendation is eliminated and two material routes remain.",
+      "cases": [{
+        "id": "eliminated_recommendation_no_positional_fallback_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Resolve the feasible foundation after the recommended route fails a hard constraint.",
+        "input": {
+          "kind": "route_resolution",
+          "routes": [
+            { "id": "invalid_recommended", "pattern": "static_demo", "consequence_group": "invalid", "satisfies_hard_constraints": false, "dominated": false, "business_owned": false, "durable_tradeoff": false },
+            { "id": "managed_route", "pattern": "managed_modular_monolith", "consequence_group": "low_operations", "satisfies_hard_constraints": true, "dominated": false, "business_owned": false, "durable_tradeoff": false },
+            { "id": "self_hosted_route", "pattern": "self_hosted_modular_monolith", "consequence_group": "deployment_control", "satisfies_hard_constraints": true, "dominated": false, "business_owned": false, "durable_tradeoff": false }
+          ],
+          "recommended_route_id": "invalid_recommended",
+          "critical_question_key": null
+        },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_route_ids": ["invalid_recommended"], "abstention_reason": "no_deterministic_winner", "required_elimination_reasons": ["hard_constraint"] }
+      }]
+    },
+    {
+      "id": "three_route_ambiguity_abstains",
+      "title": "Three material routes do not silently become a decision",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["three_or_more_routes"],
+      "rationale": "Reproduces the legacy exact-three-route fall-through to decide.",
+      "cases": [{
+        "id": "three_route_ambiguity_abstains_original",
+        "provenance": "original",
+        "language": "en",
+        "requirement": "Three feasible foundations have materially different business consequences and no known discriminator.",
+        "input": {
+          "kind": "route_resolution",
+          "routes": [
+            { "id": "managed_route", "pattern": "managed_modular_monolith", "consequence_group": "low_operations", "satisfies_hard_constraints": true, "dominated": false, "business_owned": true, "durable_tradeoff": true },
+            { "id": "api_route", "pattern": "separated_api_monolith", "consequence_group": "multiple_clients", "satisfies_hard_constraints": true, "dominated": false, "business_owned": true, "durable_tradeoff": true },
+            { "id": "self_hosted_route", "pattern": "self_hosted_modular_monolith", "consequence_group": "deployment_control", "satisfies_hard_constraints": true, "dominated": false, "business_owned": true, "durable_tradeoff": true }
+          ],
+          "recommended_route_id": "managed_route",
+          "critical_question_key": null
+        },
+        "expected": { "interaction_modes": ["abstain"], "abstention_reason": "too_many_material_routes", "required_trace_ids": ["three_material_route_groups"] }
+      }]
+    }
+  ]
+}

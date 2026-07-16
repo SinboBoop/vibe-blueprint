@@ -1,0 +1,89 @@
+{
+  "name": "vibe-blueprint-mcp",
+  "version": "0.2.0",
+  "description": "A saved, reviewable technical blueprint for vibe coding—plan the start, keep the reasons, and revisit on demand.",
+  "type": "module",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SinboBoop/vibe-blueprint.git"
+  },
+  "homepage": "https://github.com/SinboBoop/vibe-blueprint#readme",
+  "bugs": {
+    "url": "https://github.com/SinboBoop/vibe-blueprint/issues"
+  },
+  "keywords": [
+    "vibe-coding",
+    "mcp",
+    "tech-stack",
+    "ai-coding",
+    "model-context-protocol",
+    "software-architecture",
+    "project-planning",
+    "architecture-decisions",
+    "ai-agents",
+    "codex",
+    "claude-code",
+    "developer-tools",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "vibe-blueprint-mcp": "dist/server.js",
+    "vibe-blueprint": "dist/cli.js",
+    "foundation-guard-mcp": "dist/server.js",
+    "foundation-guard": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "docs/*.md",
+    "docs/assets/vibe-blueprint-hero.html",
+    "docs/assets/vibe-blueprint-hero.png",
+    "docs/releases/*.md",
+    "resources",
+    "schemas",
+    "scripts/scan-secrets.mjs",
+    "skill",
+    ".env.example",
+    "README.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:inventory": "vitest run tests/inventory",
+    "test:regression-inventory": "vitest run tests/unit/regression-inventory.test.ts tests/inventory/regression-fixtures.test.ts tests/inventory/regression-runner.test.ts",
+    "inventory:report": "npm run build && node dist/regression-inventory-cli.js",
+    "verify:live": "npm run build && node dist/cli.js live-verify --yes --output docs/releases/live-provider-verification.json",
+    "test:protocol": "vitest run tests/integration/mcp-protocol.test.ts",
+    "test:e2e": "npm run build && vitest run tests/e2e",
+    "check:skill": "node scripts/validate-skill.mjs && node scripts/run-skill-evals.mjs --validate-only && node scripts/grade-skill-evals.mjs --validate-only",
+    "check:brand": "node scripts/check-brand.mjs",
+    "check:package": "node scripts/check-package.mjs",
+    "scan:secrets": "node scripts/scan-secrets.mjs",
+    "start": "node dist/server.js",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "proper-lockfile": "^4.1.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "@types/proper-lockfile": "^4.1.4",
+    "eslint": "9.39.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.64.0",
+    "vitest": "3.2.7",
+    "yaml": "^2.8.3"
+  }
+}

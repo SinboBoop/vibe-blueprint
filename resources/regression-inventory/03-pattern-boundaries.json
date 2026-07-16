@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "families": [
+    {
+      "id": "offline_continuity_complete",
+      "title": "Offline continuity requires the complete safeguard set",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["offline_continuity"],
+      "rationale": "Pins all four minimum safeguards for material work during network loss.",
+      "cases": [{
+        "id": "offline_continuity_complete_original", "provenance": "original", "language": "en",
+        "requirement": "Field staff must continue material work without a network and synchronize later.",
+        "input": { "kind": "pattern_invariant", "pattern": "offline_first", "required_capabilities": ["offline_continuity"], "satisfied_invariant_ids": ["offline.durable_local_operations", "offline.sync_protocol", "offline.conflict_handling", "offline.idempotent_server_application"] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["offline_first"], "required_invariant_ids": ["offline.durable_local_operations", "offline.sync_protocol", "offline.conflict_handling", "offline.idempotent_server_application"] }
+      }, {
+        "id": "offline_continuity_complete_zh", "provenance": "derived", "source_family_id": "offline_continuity_complete", "transformation": "translation", "language": "zh",
+        "requirement": "现场人员断网时必须继续完成重要工作，恢复网络后再同步。",
+        "input": { "kind": "pattern_invariant", "pattern": "offline_first", "required_capabilities": ["offline_continuity"], "satisfied_invariant_ids": ["offline.durable_local_operations", "offline.sync_protocol", "offline.conflict_handling", "offline.idempotent_server_application"] },
+        "material_input_assertions": [{ "id": "offline_pattern_preserved", "source_path": "/pattern", "relationship": "preserved", "comparison": "exact" }, { "id": "offline_capability_preserved", "source_path": "/required_capabilities", "relationship": "preserved", "comparison": "unordered_array" }, { "id": "offline_invariants_preserved", "source_path": "/satisfied_invariant_ids", "relationship": "preserved", "comparison": "unordered_array" }],
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["offline_first"], "required_invariant_ids": ["offline.durable_local_operations", "offline.sync_protocol", "offline.conflict_handling", "offline.idempotent_server_application"] }
+      }]
+    },
+    {
+      "id": "offline_continuity_missing_conflict",
+      "title": "Offline route missing conflict handling is infeasible",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["offline_continuity"],
+      "rationale": "Prevents a capability boolean or prose from hiding a missing conflict policy.",
+      "cases": [{
+        "id": "offline_continuity_missing_conflict_original", "provenance": "original", "language": "en",
+        "requirement": "Work must continue offline, but the proposed route defines no conflict handling.",
+        "input": { "kind": "pattern_invariant", "pattern": "offline_first", "required_capabilities": ["offline_continuity"], "satisfied_invariant_ids": ["offline.durable_local_operations", "offline.sync_protocol", "offline.idempotent_server_application"] },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_pattern_ids": ["offline_first"], "abstention_reason": "no_feasible_route", "required_invariant_ids": ["offline.conflict_handling"], "required_elimination_reasons": ["missing_invariant"] }
+      }]
+    },
+    {
+      "id": "offline_optional_managed",
+      "title": "Optional offline work does not force offline-first",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["offline_optional"],
+      "rationale": "Protects the boundary between a hard outage-continuity requirement and an optional convenience.",
+      "cases": [{
+        "id": "offline_optional_managed_original", "provenance": "original", "language": "en",
+        "requirement": "If the internet is unavailable, staff may pause work until it returns.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": [], "satisfied_invariant_ids": [] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"] }
+      }]
+    },
+    {
+      "id": "multi_org_complete_isolation",
+      "title": "Multiple organizations have owner and isolation invariants",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["multi_organization_isolation"],
+      "rationale": "Pins the two server-side minimum safeguards for tenant data.",
+      "cases": [{
+        "id": "multi_org_complete_isolation_original", "provenance": "original", "language": "en",
+        "requirement": "Separate customer organizations use isolated workspaces and records.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["multi_organization"], "satisfied_invariant_ids": ["multi_org.data_owner_boundary", "multi_org.server_side_isolation"] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"], "required_invariant_ids": ["multi_org.data_owner_boundary", "multi_org.server_side_isolation"] }
+      }]
+    },
+    {
+      "id": "multi_org_client_filter_only",
+      "title": "Client-only tenant filtering is not isolation",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["multi_organization_isolation"],
+      "rationale": "Rejects multi-organization claims without server-side isolation.",
+      "cases": [{
+        "id": "multi_org_client_filter_only_original", "provenance": "original", "language": "en",
+        "requirement": "The UI filters rows by organization, but the server has no tenant isolation boundary.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["multi_organization"], "satisfied_invariant_ids": ["multi_org.data_owner_boundary"] },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_pattern_ids": ["managed_modular_monolith"], "abstention_reason": "no_feasible_route", "required_invariant_ids": ["multi_org.server_side_isolation"], "required_elimination_reasons": ["missing_invariant"] }
+      }]
+    },
+    {
+      "id": "single_org_no_tenant_invariants",
+      "title": "A single organization does not require tenant isolation",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["single_organization"],
+      "rationale": "Prevents minimum multi-organization invariants from leaking into a single-organization product.",
+      "cases": [{
+        "id": "single_org_no_tenant_invariants_original", "provenance": "original", "language": "en",
+        "requirement": "One internal company uses the product; no external organization or tenant exists.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": [], "satisfied_invariant_ids": [] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"] }
+      }]
+    },
+    {
+      "id": "static_demo_rejects_production_records",
+      "title": "Static demo cannot own authoritative production records",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["static_demo_production_records"],
+      "rationale": "Pins the authoritative-state exclusion for the static demo pattern.",
+      "cases": [{
+        "id": "static_demo_rejects_production_records_original", "provenance": "original", "language": "en",
+        "requirement": "Use a static demo to store authoritative production expense records.",
+        "input": { "kind": "pattern_invariant", "pattern": "static_demo", "required_capabilities": ["authoritative_production_records"], "satisfied_invariant_ids": [] },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_pattern_ids": ["static_demo"], "abstention_reason": "no_feasible_route", "required_invariant_ids": ["production.authoritative_records"], "required_elimination_reasons": ["pattern_conflict"] }
+      }]
+    },
+    {
+      "id": "static_demo_disposable_fixtures",
+      "title": "Static demo remains valid for disposable fixtures",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["disposable_static_demo"],
+      "rationale": "Provides the passing counter-boundary for presentation-only data.",
+      "cases": [{
+        "id": "static_demo_disposable_fixtures_original", "provenance": "original", "language": "en",
+        "requirement": "Create a disposable presentation using only fake fixture data and no shared workflow state.",
+        "input": { "kind": "pattern_invariant", "pattern": "static_demo", "required_capabilities": [], "satisfied_invariant_ids": [] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["static_demo"] }
+      }]
+    },
+    {
+      "id": "real_payment_complete_safeguards",
+      "title": "Real payments include all four minimum safeguards",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["real_payments"],
+      "rationale": "Pins authenticity, idempotency, reconciliation, and recovery requirements.",
+      "cases": [{
+        "id": "real_payment_complete_safeguards_original", "provenance": "original", "language": "en",
+        "requirement": "Take real payments with verified callbacks, idempotent processing, reconciliation, and retry recovery.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["real_payments"], "satisfied_invariant_ids": ["payments.callback_authenticity", "payments.idempotent_processing", "payments.reconciliation", "payments.failure_recovery"] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"], "required_invariant_ids": ["payments.callback_authenticity", "payments.idempotent_processing", "payments.reconciliation", "payments.failure_recovery"] }
+      }]
+    },
+    {
+      "id": "real_payment_provider_only",
+      "title": "Naming a payment provider is not a safeguard set",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["real_payments"],
+      "rationale": "Rejects a route that relies on a provider name without payment invariants.",
+      "cases": [{
+        "id": "real_payment_provider_only_original", "provenance": "original", "language": "en",
+        "requirement": "Take real payments with a named provider but no explicit callback, idempotency, reconciliation, or retry controls.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["real_payments"], "satisfied_invariant_ids": [] },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_pattern_ids": ["managed_modular_monolith"], "abstention_reason": "no_feasible_route", "required_invariant_ids": ["payments.callback_authenticity", "payments.idempotent_processing", "payments.reconciliation", "payments.failure_recovery"], "required_elimination_reasons": ["missing_invariant"] }
+      }]
+    },
+    {
+      "id": "record_only_expense_no_payment_invariants",
+      "title": "Record-only expenses do not trigger real-payment invariants",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["record_only_expense", "financial_records_without_funds_control"],
+      "rationale": "Protects the pattern boundary paired with the activity classifier's record-only behavior.",
+      "cases": [{
+        "id": "record_only_expense_no_payment_invariants_original", "provenance": "original", "language": "en",
+        "requirement": "Record and approve expenses; an external payroll team moves all money.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["authoritative_production_records"], "satisfied_invariant_ids": ["production.authoritative_records"] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"], "required_invariant_ids": ["production.authoritative_records"] }
+      }]
+    },
+    {
+      "id": "sensitive_data_complete_safeguards",
+      "title": "Sensitive data includes lifecycle safeguards",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["sensitive_data", "sensitive_data_lifecycle"],
+      "rationale": "Pins authorization, audit, lifecycle, and storage/transit protection.",
+      "cases": [{
+        "id": "sensitive_data_complete_safeguards_original", "provenance": "original", "language": "en",
+        "requirement": "Store passport data with server authorization, audit records, retention/deletion policy, and protection at rest and in transit.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["sensitive_data"], "satisfied_invariant_ids": ["sensitive.server_side_authorization", "sensitive.auditability", "sensitive.retention_deletion", "sensitive.storage_transit_protection"] },
+        "expected": { "interaction_modes": ["decide"], "permitted_pattern_ids": ["managed_modular_monolith"], "required_invariant_ids": ["sensitive.server_side_authorization", "sensitive.auditability", "sensitive.retention_deletion", "sensitive.storage_transit_protection"] }
+      }]
+    },
+    {
+      "id": "sensitive_data_missing_lifecycle",
+      "title": "Generic security does not replace retention and deletion",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["sensitive_data", "sensitive_data_lifecycle"],
+      "rationale": "Rejects generic secure-storage prose that omits sensitive-data lifecycle handling.",
+      "cases": [{
+        "id": "sensitive_data_missing_lifecycle_original", "provenance": "original", "language": "en",
+        "requirement": "Store passport data securely, but define no retention or deletion policy.",
+        "input": { "kind": "pattern_invariant", "pattern": "managed_modular_monolith", "required_capabilities": ["sensitive_data"], "satisfied_invariant_ids": ["sensitive.server_side_authorization", "sensitive.auditability", "sensitive.storage_transit_protection"] },
+        "expected": { "interaction_modes": ["abstain"], "prohibited_pattern_ids": ["managed_modular_monolith"], "abstention_reason": "no_feasible_route", "required_invariant_ids": ["sensitive.retention_deletion"], "required_elimination_reasons": ["missing_invariant"] }
+      }]
+    }
+  ]
+}

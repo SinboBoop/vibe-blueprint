@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "families": [
+    {
+      "id": "expense_receipt_approval",
+      "title": "Receipt submission and approval",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["ordinary_expense_workflow", "record_only_expense"],
+      "rationale": "Pins the routine administrative side of the expense boundary.",
+      "cases": [{
+        "id": "expense_receipt_approval_original", "provenance": "original", "language": "en",
+        "requirement": "Staff upload receipts and managers approve or reject reimbursement requests; another system handles payouts.",
+        "input": { "kind": "activity", "facts": [{ "key": "expense_approval", "value": true, "certainty": "explicit" }, { "key": "controls_funds", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "low", "requires_escalation": false }] },
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["expense_workflow"], "activity_actions": ["normal"], "required_trace_ids": ["expense_artifact", "expense_workflow_action"] }
+      }, {
+        "id": "expense_receipt_approval_zh_translation", "provenance": "derived", "source_family_id": "expense_receipt_approval", "transformation": "translation", "language": "zh",
+        "requirement": "员工提交发票和报销单，经理审批或拒绝；所有付款都由另一个系统完成。",
+        "input": { "kind": "activity", "facts": [{ "key": "expense_approval", "value": true, "certainty": "explicit" }, { "key": "controls_funds", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "low", "requires_escalation": false }] },
+        "material_input_assertions": [{ "id": "expense_facts_preserved", "source_path": "/facts", "relationship": "preserved", "comparison": "exact" }, { "id": "expense_risk_preserved", "source_path": "/risk_assessments", "relationship": "preserved", "comparison": "exact" }],
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["expense_workflow"], "activity_actions": ["normal"], "required_trace_ids": ["expense_artifact", "expense_workflow_action"] }
+      }, {
+        "id": "expense_receipt_approval_en_paraphrase", "provenance": "derived", "source_family_id": "expense_receipt_approval", "transformation": "paraphrase", "language": "en",
+        "requirement": "People submit expense evidence for managerial approval; this service never disburses the reimbursement.",
+        "input": { "kind": "activity", "facts": [{ "key": "expense_approval", "value": true, "certainty": "explicit" }, { "key": "controls_funds", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "low", "requires_escalation": false }] },
+        "material_input_assertions": [{ "id": "expense_facts_preserved", "source_path": "/facts", "relationship": "preserved", "comparison": "exact" }, { "id": "expense_risk_preserved", "source_path": "/risk_assessments", "relationship": "preserved", "comparison": "exact" }],
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["expense_workflow"], "activity_actions": ["normal"], "required_trace_ids": ["expense_artifact", "expense_workflow_action"] }
+      }]
+    },
+    {
+      "id": "financial_records_read_only",
+      "title": "Read-only financial records",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["financial_records_without_funds_control"],
+      "rationale": "Distinguishes stored financial records from controlling money.",
+      "cases": [{
+        "id": "financial_records_read_only_original", "provenance": "original", "language": "en",
+        "requirement": "Auditors can read ledger entries and export reports, but the product cannot authorize or move money.",
+        "input": { "kind": "activity", "facts": [{ "key": "financial_records", "value": true, "certainty": "explicit" }, { "key": "controls_funds", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": false }] },
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["financial_records"], "activity_actions": ["safeguards_required"], "required_trace_ids": ["financial_record_artifact", "record_handling_action"] }
+      }]
+    },
+    {
+      "id": "invoice_reader_payment_negated",
+      "title": "Invoice reader explicitly does not pay",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["invoice_payment_negation", "financial_records_without_funds_control", "material_fact_flips"],
+      "rationale": "Protects explicit payment negation from a lexical payment match.",
+      "cases": [{
+        "id": "invoice_reader_payment_negated_original", "provenance": "original", "language": "en",
+        "requirement": "The app reads and records invoices. It never makes payments, initiates transfers, or receives authoritative payment callbacks.",
+        "input": { "kind": "activity", "facts": [{ "key": "invoice_records", "value": true, "certainty": "explicit" }, { "key": "makes_payments", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": false }] },
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["financial_records"], "activity_actions": ["safeguards_required"], "required_trace_ids": ["financial_record_artifact", "record_handling_action"] }
+      }, {
+        "id": "invoice_reader_payment_negated_zh", "provenance": "derived", "source_family_id": "invoice_reader_payment_negated", "transformation": "translation", "language": "zh",
+        "requirement": "这个应用只读取和记录发票，明确不会付款、发起转账，也不接收支付平台的权威回调。",
+        "input": { "kind": "activity", "facts": [{ "key": "invoice_records", "value": true, "certainty": "explicit" }, { "key": "makes_payments", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": false }] },
+        "material_input_assertions": [{ "id": "invoice_facts_preserved", "source_path": "/facts", "relationship": "preserved", "comparison": "exact" }, { "id": "invoice_risk_preserved", "source_path": "/risk_assessments", "relationship": "preserved", "comparison": "exact" }],
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["financial_records"], "activity_actions": ["safeguards_required"], "required_trace_ids": ["financial_record_artifact", "record_handling_action"] }
+      }, {
+        "id": "invoice_reader_payment_negation_explicit", "provenance": "derived", "source_family_id": "invoice_reader_payment_negated", "transformation": "negation", "language": "mixed",
+        "requirement": "Invoice reader only：不支付、不转账、never controls funds。",
+        "input": { "kind": "activity", "facts": [{ "key": "invoice_records", "value": true, "certainty": "explicit" }, { "key": "makes_payments", "value": false, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": false }] },
+        "material_input_assertions": [{ "id": "invoice_facts_preserved", "source_path": "/facts", "relationship": "preserved", "comparison": "exact" }, { "id": "invoice_risk_preserved", "source_path": "/risk_assessments", "relationship": "preserved", "comparison": "exact" }],
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": ["financial_records"], "activity_actions": ["safeguards_required"], "required_trace_ids": ["financial_record_artifact", "record_handling_action"] }
+      }, {
+        "id": "invoice_reader_to_transfer_flip", "provenance": "derived", "source_family_id": "invoice_reader_payment_negated", "transformation": "material_flip", "language": "en",
+        "requirement": "The app reads invoices and then initiates the real supplier transfer itself.",
+        "input": { "kind": "activity", "facts": [{ "key": "invoice_records", "value": true, "certainty": "explicit" }, { "key": "initiates_transfer", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "high", "requires_escalation": true }] },
+        "material_input_assertions": [{ "id": "activity_facts_flipped", "source_path": "/facts", "relationship": "flipped", "comparison": "exact" }, { "id": "financial_risk_flipped", "source_path": "/risk_assessments", "relationship": "flipped", "comparison": "exact" }],
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["money_movement"], "activity_actions": ["specialist_review"], "required_trace_ids": ["funds_control_action", "funds_object"] },
+        "material_changes": [
+          { "field": "interaction_modes", "from": "[\"decide\"]", "to": "[\"escalate\"]" },
+          { "field": "activity_subtypes", "from": "[\"financial_records\"]", "to": "[\"money_movement\"]" },
+          { "field": "activity_actions", "from": "[\"safeguards_required\"]", "to": "[\"specialist_review\"]" }
+        ]
+      }]
+    },
+    {
+      "id": "money_transfer_initiation",
+      "title": "Product initiates real transfers",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["actual_money_movement"],
+      "rationale": "Pins transfer initiation to specialist review.",
+      "cases": [{
+        "id": "money_transfer_initiation_original", "provenance": "original", "language": "en",
+        "requirement": "After approval, the product initiates a real bank transfer to the employee.",
+        "input": { "kind": "activity", "facts": [{ "key": "initiates_transfer", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "high", "requires_escalation": true }] },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["money_movement"], "activity_actions": ["specialist_review"], "required_trace_ids": ["funds_control_action", "funds_object"] }
+      }]
+    },
+    {
+      "id": "payment_refund_control",
+      "title": "Product controls charges and refunds",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["actual_money_movement", "real_payments"],
+      "rationale": "Covers authoritative payment and refund control rather than record keeping.",
+      "cases": [{
+        "id": "payment_refund_control_original", "provenance": "original", "language": "en",
+        "requirement": "The application creates charges, authorizes refunds, and consumes authoritative provider callbacks.",
+        "input": { "kind": "activity", "facts": [{ "key": "controls_payment", "value": true, "certainty": "explicit" }, { "key": "authorizes_refund", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "payments", "severity": "high", "requires_escalation": true }] },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["money_movement"], "activity_actions": ["specialist_review"], "required_trace_ids": ["funds_control_action", "funds_object"] }
+      }]
+    },
+    {
+      "id": "credit_eligibility_decision",
+      "title": "Automated credit eligibility decision",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["credit_decision"],
+      "rationale": "Pins credit eligibility and pricing decisions to specialist review.",
+      "cases": [{
+        "id": "credit_eligibility_decision_original", "provenance": "original", "language": "en",
+        "requirement": "The product decides whether an applicant receives credit and sets the approved limit and price.",
+        "input": { "kind": "activity", "facts": [{ "key": "determines_credit_eligibility", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "critical", "requires_escalation": true }] },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["credit_decision"], "activity_actions": ["specialist_review"], "required_trace_ids": ["credit_decision_action", "credit_subject"] }
+      }]
+    },
+    {
+      "id": "investment_recommendation",
+      "title": "Personal investment recommendation",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["investment_advice"],
+      "rationale": "Pins investment selection or recommendation to specialist review.",
+      "cases": [{
+        "id": "investment_recommendation_original", "provenance": "original", "language": "en",
+        "requirement": "The product recommends which securities a person should buy for their account.",
+        "input": { "kind": "activity", "facts": [{ "key": "recommends_investments", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "financial", "severity": "critical", "requires_escalation": true }] },
+        "expected": { "interaction_modes": ["escalate"], "activity_subtypes": ["investment_advice"], "activity_actions": ["specialist_review"], "required_trace_ids": ["investment_recommendation_action", "investment_subject"] }
+      }]
+    },
+    {
+      "id": "financial_scope_unknown",
+      "title": "Broad financial platform scope is unknown",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["financial_scope_ambiguity"],
+      "rationale": "Requires one user-owned scope question instead of guessing administration or regulated activity.",
+      "cases": [{
+        "id": "financial_scope_unknown_original", "provenance": "original", "language": "en",
+        "requirement": "Build a financial operations platform for small businesses.",
+        "input": { "kind": "activity", "facts": [{ "key": "financial_scope", "value": null, "certainty": "unknown_critical" }], "risk_assessments": [{ "domain": "financial", "severity": "moderate", "requires_escalation": false }] },
+        "expected": { "interaction_modes": ["confirm_fact"], "activity_subtypes": [null], "activity_actions": ["confirm_scope"], "question_key": "financial_activity_scope", "required_trace_ids": ["financial_activity_scope"] }
+      }]
+    },
+    {
+      "id": "routine_privacy_hygiene",
+      "title": "Routine account privacy is not critical disclosure",
+      "review_status": "maintainer_reviewed",
+      "language": "en",
+      "categories": ["routine_privacy"],
+      "rationale": "Prevents a low-severity privacy domain name from becoming specialist review.",
+      "cases": [{
+        "id": "routine_privacy_hygiene_original", "provenance": "original", "language": "en",
+        "requirement": "Protect ordinary user profile data with least privilege and account deletion.",
+        "input": { "kind": "activity", "facts": [{ "key": "ordinary_profile_data", "value": true, "certainty": "explicit" }], "risk_assessments": [{ "domain": "privacy", "severity": "moderate", "requires_escalation": false }] },
+        "expected": { "interaction_modes": ["decide"], "activity_subtypes": [null], "activity_actions": ["normal"] }
+      }]
+    }
+  ]
+}

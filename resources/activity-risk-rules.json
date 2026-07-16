@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "scope_confirmation": {
+    "rule_id": "financial_activity_scope",
+    "question_key": "financial_activity_scope",
+    "signal_terms": {
+      "en": [
+        "financial platform",
+        "financial operations platform",
+        "financial system",
+        "finance platform",
+        "finance operations platform",
+        "finance system",
+        "payment platform",
+        "credit platform",
+        "investment platform"
+      ],
+      "zh": [
+        "金融平台",
+        "金融系统",
+        "财务平台",
+        "财务系统",
+        "支付平台",
+        "信贷平台",
+        "投资平台"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "id": "expense_workflow",
+      "primary_activity": "expense_workflow",
+      "action": "normal",
+      "minimum_independent_signals": 1,
+      "positive_signal_groups": [
+        {
+          "id": "expense_artifact",
+          "terms": {
+            "en": ["expense claim", "expense report", "expense reimbursement", "reimbursement request", "reimbursement requests", "employee expenses", "receipt reimbursement", "expense evidence"],
+            "zh": ["报销", "费用申请", "费用报销", "报销单", "报销申请", "员工费用"]
+          }
+        },
+        {
+          "id": "expense_workflow_action",
+          "terms": {
+            "en": ["submit receipts", "upload receipts", "submit expense evidence", "approve expenses", "review expenses", "approve reimbursements", "approve reimbursement requests", "approve or reject reimbursement requests"],
+            "zh": ["提交票据", "提交发票", "审批费用", "审核报销", "审批报销"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "expense_excluded",
+          "terms": {
+            "en": ["not an expense workflow", "does not handle expenses", "no expense reimbursement"],
+            "zh": ["不处理报销", "不涉及报销", "没有报销功能"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "financial_records",
+      "primary_activity": "financial_records",
+      "action": "safeguards_required",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "financial_record_artifact",
+          "terms": {
+            "en": ["invoice", "invoices", "financial record", "financial records", "ledger", "accounting record", "accounting records"],
+            "zh": ["发票", "财务记录", "账本", "会计记录", "财务凭证"]
+          }
+        },
+        {
+          "id": "record_handling_action",
+          "terms": {
+            "en": ["read", "reads", "reader", "store", "stores", "record", "records", "report", "reports", "audit", "audits", "archive", "archives"],
+            "zh": ["读取", "只读", "保存", "存储", "记录", "报告", "审计", "归档"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "records_excluded",
+          "terms": {
+            "en": ["does not store invoices", "does not keep financial records", "no financial records"],
+            "zh": ["不保存发票", "不存储财务记录", "没有财务记录"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "money_movement",
+      "primary_activity": "money_movement",
+      "action": "specialist_review",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "funds_control_action",
+          "terms": {
+            "en": ["initiate", "initiates", "initiated", "initiating", "authorize", "authorizes", "authorized", "authorizing", "send", "sends", "receive", "receives", "disburse", "disburses", "settle", "settles", "hold", "holds", "control", "controls", "controlled", "controlling", "issue", "issues", "execute", "executes"],
+            "zh": ["发起", "授权", "转出", "结算", "托管", "控制", "执行"]
+          }
+        },
+        {
+          "id": "funds_object",
+          "terms": {
+            "en": ["payment", "payments", "money", "funds", "transfer", "transfers", "payout", "payouts", "refund", "refunds", "escrow"],
+            "zh": ["支付", "付款", "资金", "款项", "转账", "打款", "退款", "托管资金"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "record_only_no_funds_control",
+          "terms": {
+            "en": ["record only", "only records", "read-only invoices", "does not make payments", "does not initiate payments", "does not transfer funds", "never holds funds"],
+            "zh": ["仅记录", "只记录", "只审批", "不支付", "不发起转账", "不控制资金", "不经手资金", "不托管资金"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "credit_decision",
+      "primary_activity": "credit_decision",
+      "action": "specialist_review",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "credit_decision_action",
+          "terms": {
+            "en": ["determine", "determines", "determining", "decide", "decides", "approve", "approves", "deny", "denies", "score", "scores", "price", "prices", "pricing", "set limit", "sets limit", "set the limit", "sets the limit"],
+            "zh": ["决定", "审批", "拒绝", "评分", "定价", "设置额度", "确定额度"]
+          }
+        },
+        {
+          "id": "credit_subject",
+          "terms": {
+            "en": ["credit", "loan", "borrower", "credit limit", "interest rate"],
+            "zh": ["信贷", "贷款", "借款人", "信用额度", "利率", "授信"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "credit_decision_excluded",
+          "terms": {
+            "en": ["does not make credit decisions", "does not approve loans", "no credit decision"],
+            "zh": ["不做信贷决策", "不审批贷款", "不决定授信", "不做授信决策"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "investment_advice",
+      "primary_activity": "investment_advice",
+      "action": "specialist_review",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "investment_recommendation_action",
+          "terms": {
+            "en": ["recommend", "recommends", "advise", "advises", "select", "selects", "allocate", "allocates", "rebalance", "rebalances", "manage portfolio", "manages portfolio"],
+            "zh": ["推荐", "建议", "选择", "配置", "调仓", "管理投资组合"]
+          }
+        },
+        {
+          "id": "investment_subject",
+          "terms": {
+            "en": ["investment", "securities", "stock", "stocks", "bond", "bonds", "fund", "funds", "portfolio"],
+            "zh": ["投资", "证券", "股票", "债券", "基金", "投资组合"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "investment_advice_excluded",
+          "terms": {
+            "en": ["does not provide investment advice", "no investment recommendation", "education only"],
+            "zh": ["不提供投资建议", "不推荐投资", "仅供教育", "只做信息展示"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "critical_security",
+      "primary_activity": "critical_security",
+      "action": "specialist_review",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "critical_security_action",
+          "terms": {
+            "en": ["bypass", "bypasses", "bypassed", "bypassing", "disable", "disables", "disabled", "disabling", "evade", "evades", "evaded", "evading", "harvest", "harvests", "harvested", "harvesting", "steal", "steals", "stole", "stolen", "stealing", "exfiltrate", "exfiltrates", "exfiltrated", "exfiltrating"],
+            "zh": ["绕过", "禁用", "规避", "窃取", "盗取", "外传"]
+          }
+        },
+        {
+          "id": "security_control_or_secret",
+          "terms": {
+            "en": ["access control", "authentication", "authorization", "credential", "credentials", "password", "passwords", "secret", "secrets", "security control"],
+            "zh": ["访问控制", "身份验证", "授权检查", "凭证", "密码", "密钥", "安全控制"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "defensive_security_context",
+          "terms": {
+            "en": ["prevent bypass", "detect bypass", "block bypass", "prevent disabling security", "detect credential theft", "block credential theft", "protect against credential theft", "detect credential harvesting", "block credential harvesting", "protect against credential harvesting", "must not disable security"],
+            "zh": ["防止绕过", "检测凭证窃取", "阻止凭证窃取", "禁止禁用安全控制", "防止密码泄露"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "critical_privacy",
+      "primary_activity": "critical_privacy",
+      "action": "specialist_review",
+      "minimum_independent_signals": 2,
+      "positive_signal_groups": [
+        {
+          "id": "critical_privacy_action",
+          "terms": {
+            "en": ["exfiltrate", "exfiltrates", "exfiltrated", "exfiltrating", "exfiltration", "bulk exfiltration", "disclose", "discloses", "disclosed", "disclosing", "unauthorized disclosure", "publish", "publishes", "published", "publishing", "sell", "sells", "sold", "selling", "leak", "leaks", "leaked", "leaking", "scrape", "scrapes", "scraped", "scraping", "export all", "bulk export"],
+            "zh": ["外泄", "泄露", "披露", "公开", "出售", "抓取", "批量导出"]
+          }
+        },
+        {
+          "id": "sensitive_personal_data",
+          "terms": {
+            "en": ["personal data", "personal information", "pii", "sensitive data", "user data", "medical records", "biometric data"],
+            "zh": ["个人信息", "个人数据", "敏感数据", "用户数据", "医疗记录", "生物识别数据"]
+          }
+        }
+      ],
+      "negative_signal_groups": [
+        {
+          "id": "defensive_privacy_context",
+          "terms": {
+            "en": ["prevent data leaks", "detect data exfiltration", "prevent data exfiltration", "block data exfiltration", "detect bulk exfiltration", "prevent bulk exfiltration", "block bulk exfiltration", "detect unauthorized disclosure", "prevent unauthorized disclosure", "block unauthorized disclosure", "must not sell personal data"],
+            "zh": ["防止数据泄露", "检测数据外泄", "阻止未授权披露", "禁止出售个人信息"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "invariant_families": [
+    {
+      "id": "production",
+      "name": "Authoritative production records",
+      "applies_when": "The product owns authoritative production business records.",
+      "required_pattern_ids": [],
+      "incompatible_pattern_ids": ["static_demo"],
+      "required_invariant_ids": ["production.authoritative_records"]
+    },
+    {
+      "id": "offline",
+      "name": "Material offline continuity",
+      "applies_when": "People must continue material work while network connectivity is unavailable.",
+      "required_pattern_ids": ["offline_first"],
+      "incompatible_pattern_ids": [],
+      "required_invariant_ids": [
+        "offline.durable_local_operations",
+        "offline.sync_protocol",
+        "offline.conflict_handling",
+        "offline.idempotent_server_application"
+      ]
+    },
+    {
+      "id": "multi_org",
+      "name": "Multi-organization isolation",
+      "applies_when": "The product stores or processes data for more than one organization or tenant.",
+      "required_pattern_ids": [],
+      "incompatible_pattern_ids": ["static_demo"],
+      "required_invariant_ids": [
+        "multi_org.data_owner_boundary",
+        "multi_org.server_side_isolation"
+      ]
+    },
+    {
+      "id": "payments",
+      "name": "Real payment processing",
+      "applies_when": "The product initiates or controls real funds movement or receives authoritative payment callbacks.",
+      "required_pattern_ids": [],
+      "incompatible_pattern_ids": ["static_demo"],
+      "required_invariant_ids": [
+        "payments.callback_authenticity",
+        "payments.idempotent_processing",
+        "payments.reconciliation",
+        "payments.failure_recovery"
+      ]
+    },
+    {
+      "id": "sensitive",
+      "name": "Sensitive data protection",
+      "applies_when": "The product stores or processes sensitive personal or business data.",
+      "required_pattern_ids": [],
+      "incompatible_pattern_ids": [],
+      "required_invariant_ids": [
+        "sensitive.server_side_authorization",
+        "sensitive.auditability",
+        "sensitive.retention_deletion",
+        "sensitive.storage_transit_protection"
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "production.authoritative_records",
+      "family_id": "production",
+      "name": "Authoritative record ownership",
+      "description": "The route provides a durable authoritative data boundary rather than presentation-only fixtures."
+    },
+    {
+      "id": "offline.durable_local_operations",
+      "family_id": "offline",
+      "name": "Durable local operations",
+      "description": "Material offline work is captured durably on the local device before synchronization."
+    },
+    {
+      "id": "offline.sync_protocol",
+      "family_id": "offline",
+      "name": "Explicit synchronization protocol",
+      "description": "Local operations synchronize through an explicit, versioned protocol."
+    },
+    {
+      "id": "offline.conflict_handling",
+      "family_id": "offline",
+      "name": "Conflict handling",
+      "description": "Concurrent offline and server changes have defined conflict-detection and resolution behavior."
+    },
+    {
+      "id": "offline.idempotent_server_application",
+      "family_id": "offline",
+      "name": "Idempotent server application",
+      "description": "Replayed synchronized operations can be applied safely without duplicating effects."
+    },
+    {
+      "id": "multi_org.data_owner_boundary",
+      "family_id": "multi_org",
+      "name": "Organization data-owner boundary",
+      "description": "Every organization-owned record carries an explicit and authoritative owner or tenant boundary."
+    },
+    {
+      "id": "multi_org.server_side_isolation",
+      "family_id": "multi_org",
+      "name": "Server-side organization isolation",
+      "description": "Organization isolation is enforced on the server and cannot rely only on client-side filtering."
+    },
+    {
+      "id": "payments.callback_authenticity",
+      "family_id": "payments",
+      "name": "Payment callback authenticity",
+      "description": "Authoritative payment callbacks or provider messages are authenticated before processing."
+    },
+    {
+      "id": "payments.idempotent_processing",
+      "family_id": "payments",
+      "name": "Idempotent payment processing",
+      "description": "Repeated payment commands and callbacks cannot duplicate a financial effect."
+    },
+    {
+      "id": "payments.reconciliation",
+      "family_id": "payments",
+      "name": "Payment reconciliation",
+      "description": "Internal payment state is reconciled against the authoritative provider record."
+    },
+    {
+      "id": "payments.failure_recovery",
+      "family_id": "payments",
+      "name": "Payment failure recovery",
+      "description": "Timeouts, retries, partial failures, refunds, and recovery paths have explicit state handling."
+    },
+    {
+      "id": "sensitive.server_side_authorization",
+      "family_id": "sensitive",
+      "name": "Server-side authorization",
+      "description": "Access to sensitive data is authorized at the trusted server boundary."
+    },
+    {
+      "id": "sensitive.auditability",
+      "family_id": "sensitive",
+      "name": "Sensitive-data auditability",
+      "description": "Material access and changes to sensitive data produce an auditable record."
+    },
+    {
+      "id": "sensitive.retention_deletion",
+      "family_id": "sensitive",
+      "name": "Retention and deletion handling",
+      "description": "Sensitive-data retention and deletion behavior is explicit and enforceable."
+    },
+    {
+      "id": "sensitive.storage_transit_protection",
+      "family_id": "sensitive",
+      "name": "Storage and transit protection",
+      "description": "Sensitive data is protected while stored and while transmitted."
+    }
+  ],
+  "patterns": [
+    {
+      "id": "static_demo",
+      "name": "Static demonstration",
+      "fit": "A disposable or presentation-only experience with no authoritative production state.",
+      "shape": "Static client assets with fixtures or a narrowly scoped hosted endpoint.",
+      "hard_limits": [
+        "Not suitable for authoritative business records, real payments, or multi-user workflow state."
+      ],
+      "minimum_invariant_ids": []
+    },
+    {
+      "id": "managed_modular_monolith",
+      "name": "Managed modular monolith",
+      "fit": "The default for an MVP or early production web product whose team values delivery speed and low operational load.",
+      "shape": "One cohesive application deployment, explicit domain modules, a managed relational database, and managed identity and storage.",
+      "hard_limits": [
+        "Continuous connectivity is assumed unless a separate offline capability is designed.",
+        "Module boundaries must remain explicit even though deployment is shared."
+      ],
+      "minimum_invariant_ids": []
+    },
+    {
+      "id": "separated_api_monolith",
+      "name": "Separated API, monolithic service",
+      "fit": "Multiple first-party clients need one stable application API, while a distributed backend would add unjustified complexity.",
+      "shape": "Web or mobile clients call one versioned API backed by a modular monolithic service and one primary data boundary.",
+      "hard_limits": [
+        "An API boundary adds compatibility and deployment coordination costs.",
+        "It is not a reason to split domain services prematurely."
+      ],
+      "minimum_invariant_ids": []
+    },
+    {
+      "id": "self_hosted_modular_monolith",
+      "name": "Self-hosted modular monolith",
+      "fit": "A real deployment-control, locality, or vendor constraint justifies owning infrastructure operations.",
+      "shape": "A modular application and relational database deployed on controlled infrastructure with explicit backup, restore, patching, and monitoring ownership.",
+      "hard_limits": [
+        "The team accepts ongoing security patching, availability, backup, and incident-response duties."
+      ],
+      "minimum_invariant_ids": []
+    },
+    {
+      "id": "offline_first",
+      "name": "Offline-first specialized route",
+      "fit": "People must continue material work through network outages and later reconcile authoritative state.",
+      "shape": "A durable local operation store, explicit synchronization protocol, conflict rules, idempotent server application, and visible sync status.",
+      "hard_limits": [
+        "Synchronization semantics, conflict resolution, migration compatibility, and recovery materially increase delivery and testing scope.",
+        "Security and data-retention rules must also cover local copies."
+      ],
+      "minimum_invariant_ids": [
+        "offline.durable_local_operations",
+        "offline.sync_protocol",
+        "offline.conflict_handling",
+        "offline.idempotent_server_application"
+      ]
+    }
+  ]
+}

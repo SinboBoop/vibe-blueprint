@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1600, initial-scale=1">
+  <title>Vibe Blueprint — Product Hero</title>
+  <style>
+    :root {
+      --paper: #f3efe4;
+      --paper-light: #faf7ef;
+      --ink: #14211e;
+      --muted: #52615c;
+      --teal: #087f7a;
+      --teal-deep: #075d5a;
+      --coral: #e85d43;
+      --rule: #b9c5bc;
+      --soft-teal: #e7f0eb;
+      --soft-coral: #fff0e8;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 1600px;
+      height: 900px;
+      margin: 0;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    body {
+      font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    .artboard {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      padding: 38px 52px 34px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, transparent 0 51px, rgba(8,127,122,.12) 51px 52px, transparent 52px 100%),
+        repeating-linear-gradient(0deg, rgba(20,33,30,.025) 0 1px, transparent 1px 9px),
+        var(--paper);
+    }
+
+    .artboard::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 88% 11%, rgba(232,93,67,.08), transparent 27%);
+      mix-blend-mode: multiply;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      height: 68px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 17px;
+    }
+
+    .brand-name {
+      font-family: "Iowan Old Style", Baskerville, Georgia, serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -.7px;
+    }
+
+    .brand-cn {
+      padding-left: 17px;
+      border-left: 1px solid var(--rule);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .revision {
+      position: relative;
+      padding-top: 10px;
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .revision::before {
+      content: "";
+      position: absolute;
+      width: 36px;
+      height: 4px;
+      left: -22px;
+      top: 20px;
+      background: var(--coral);
+      transform: rotate(-61deg);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      height: 660px;
+      display: grid;
+      grid-template-columns: 520px 1fr;
+      gap: 58px;
+      padding-top: 38px;
+    }
+
+    .copy {
+      position: relative;
+      padding-top: 8px;
+    }
+
+    .eyebrow {
+      margin: 0 0 21px;
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      color: var(--coral);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 510px;
+      margin: 0;
+      font-family: "Iowan Old Style", Baskerville, Georgia, serif;
+      font-size: 70px;
+      font-weight: 600;
+      line-height: .98;
+      letter-spacing: -3.2px;
+    }
+
+    h1 em {
+      color: var(--teal-deep);
+      font-weight: 600;
+    }
+
+    .support {
+      max-width: 500px;
+      margin: 24px 0 0;
+      font-size: 23px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: #33433e;
+    }
+
+    .support strong {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .outputs {
+      width: 493px;
+      margin-top: 24px;
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .outputs-title {
+      display: block;
+      padding: 10px 0 8px;
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      color: var(--teal-deep);
+      text-transform: uppercase;
+    }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .output-grid span {
+      padding: 9px 0 9px 22px;
+      border-top: 1px solid var(--rule);
+      font-size: 20px;
+      font-weight: 750;
+    }
+
+    .output-grid span:nth-child(odd) { border-right: 1px solid var(--rule); }
+
+    .output-grid span::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin: 0 10px 2px -18px;
+      background: var(--teal);
+    }
+
+    .blueprint {
+      position: relative;
+      height: 570px;
+      background: var(--paper-light);
+      border: 2px solid var(--ink);
+      box-shadow: 13px 13px 0 rgba(8,127,122,.14);
+      overflow: hidden;
+    }
+
+    .blueprint::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 39px, rgba(8,127,122,.045) 39px 40px),
+        repeating-linear-gradient(0deg, transparent 0 39px, rgba(8,127,122,.045) 39px 40px);
+      pointer-events: none;
+    }
+
+    .sheet-head {
+      position: relative;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .sheet-title {
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .sheet-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--teal-deep);
+    }
+
+    .sheet-status::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: var(--teal);
+      border-radius: 50%;
+    }
+
+    .decision-map {
+      position: relative;
+      height: 407px;
+      display: grid;
+      grid-template-columns: 29% 40% 31%;
+    }
+
+    .lane {
+      position: relative;
+      z-index: 2;
+      padding: 24px 21px 18px;
+      border-right: 1px solid var(--rule);
+    }
+
+    .lane:last-child { border-right: 0; }
+
+    .lane-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 21px;
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .lane-label b {
+      display: grid;
+      width: 27px;
+      height: 27px;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-size: 14px;
+    }
+
+    .item {
+      position: relative;
+      min-height: 80px;
+      margin-bottom: 19px;
+      padding: 12px 12px 10px;
+      border-top: 2px solid var(--rule);
+      background: rgba(250,247,239,.94);
+    }
+
+    .item strong {
+      display: block;
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .item span {
+      display: block;
+      margin-top: 6px;
+      font-size: 17px;
+      font-weight: 650;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .fact::after,
+    .choice::after {
+      content: "";
+      position: absolute;
+      z-index: 5;
+      top: 25px;
+      right: -28px;
+      width: 12px;
+      height: 12px;
+      background: var(--paper-light);
+      border: 3px solid var(--teal);
+      border-radius: 50%;
+    }
+
+    .choice {
+      margin-left: 13px;
+      padding-left: 15px;
+      border-top-color: var(--teal);
+      background: var(--soft-teal);
+    }
+
+    .choice::before {
+      content: "";
+      position: absolute;
+      left: -14px;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: var(--teal);
+    }
+
+    .choice::after {
+      right: -32px;
+      border-color: var(--coral);
+    }
+
+    .on-demand {
+      display: inline-block;
+      margin: -1px 0 17px 18px;
+      padding: 8px 10px;
+      border: 2px solid var(--coral);
+      color: #9e3928;
+      background: var(--paper-light);
+      font-family: SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .review {
+      min-height: 94px;
+      margin-left: 18px;
+      border-top-color: var(--coral);
+      background: var(--soft-coral);
+    }
+
+    .review::before {
+      content: "?";
+      position: absolute;
+      left: -33px;
+      top: 16px;
+      display: grid;
+      width: 23px;
+      height: 23px;
+      place-items: center;
+      border: 2px solid var(--coral);
+      border-radius: 50%;
+      background: var(--paper-light);
+      color: var(--coral);
+      font-family: Georgia, serif;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .links {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .sheet-foot {
+      position: relative;
+      height: 89px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--ink);
+      background: rgba(243,239,228,.82);
+    }
+
+    .sheet-foot div {
+      display: flex;
+      align-items: center;
+      padding: 0 22px;
+      border-right: 1px solid var(--rule);
+    }
+
+    .sheet-foot div:last-child { border-right: 0; }
+
+    .sheet-foot strong {
+      font-size: 19px;
+      line-height: 1.32;
+    }
+
+    .sheet-foot .accent { color: var(--teal-deep); }
+
+    .boundary {
+      position: relative;
+      z-index: 3;
+      height: 134px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .boundary > div {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 0 27px 0 0;
+    }
+
+    .boundary > div + div {
+      padding-left: 30px;
+      border-left: 1px solid var(--rule);
+    }
+
+    .boundary-mark {
+      flex: 0 0 auto;
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border: 3px solid var(--coral);
+      border-radius: 50%;
+      color: var(--coral);
+      font-family: Georgia, serif;
+      font-size: 29px;
+      font-weight: 800;
+    }
+
+    .boundary-text {
+      font-family: "Iowan Old Style", Baskerville, Georgia, serif;
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1.28;
+      letter-spacing: -.2px;
+    }
+
+    .boundary-text strong { color: var(--teal-deep); }
+
+    .boundary-cn {
+      font-size: 23px;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <main class="artboard" aria-label="Vibe Blueprint product hero">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">Vibe Blueprint</span>
+        <span class="brand-cn">Vibe Coding 开工蓝图</span>
+      </div>
+      <span class="revision">Saved blueprint / Rev. 03</span>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <p class="eyebrow">Make the choice. Keep the reason.</p>
+        <h1>Build from a plan that <em>remembers why.</em></h1>
+        <p class="support">Get a <strong>technical starting plan</strong> for how your app is shaped, where data and login live, how it ships, and what stays in scope.</p>
+
+        <div class="outputs" aria-label="What the starting plan covers">
+          <span class="outputs-title">Your starting plan covers</span>
+          <div class="output-grid">
+            <span>App shape</span>
+            <span>Data + login</span>
+            <span>Deployment</span>
+            <span>Boundaries</span>
+          </div>
+        </div>
+      </div>
+
+      <article class="blueprint" aria-label="A saved and reviewable project blueprint">
+        <header class="sheet-head">
+          <span class="sheet-title">Expense app / starting blueprint</span>
+          <span class="sheet-status">Saved with the project</span>
+        </header>
+
+        <div class="decision-map">
+          <section class="lane" aria-label="Start from project facts">
+            <div class="lane-label"><b>1</b> Start / Facts</div>
+            <div class="item fact">
+              <strong>First-time builder</strong>
+              <span>Keep the setup simple</span>
+            </div>
+            <div class="item fact">
+              <strong>Login + receipts</strong>
+              <span>Private user data</span>
+            </div>
+          </section>
+
+          <section class="lane" aria-label="Remember choices and reasons">
+            <div class="lane-label"><b>2</b> Remember / Choices</div>
+            <div class="item choice">
+              <strong>One web app</strong>
+              <span>Less to learn and maintain</span>
+            </div>
+            <div class="item choice">
+              <strong>Managed data + login</strong>
+              <span>Fits a quick first launch</span>
+            </div>
+          </section>
+
+          <section class="lane" aria-label="Revisit only when asked">
+            <div class="lane-label"><b>3</b> Revisit / Signals</div>
+            <span class="on-demand">Only when you ask</span>
+            <div class="item review">
+              <strong>New: offline use</strong>
+              <span>Review the data approach</span>
+            </div>
+            <div class="item review">
+              <strong>Code scan: boundary signal</strong>
+              <span>Shows affected capability</span>
+            </div>
+          </section>
+
+          <svg class="links" viewBox="0 0 862 407" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="arrow-teal" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#087f7a"/>
+              </marker>
+              <marker id="arrow-coral" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#e85d43"/>
+              </marker>
+            </defs>
+            <path d="M238 122 C265 122, 280 122, 309 122" fill="none" stroke="#087f7a" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+            <path d="M238 221 C265 221, 280 221, 309 221" fill="none" stroke="#087f7a" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+            <path d="M580 122 C611 122, 620 181, 646 181" fill="none" stroke="#e85d43" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow-coral)"/>
+            <path d="M580 221 C611 221, 620 294, 646 294" fill="none" stroke="#e85d43" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow-coral)"/>
+          </svg>
+        </div>
+
+        <footer class="sheet-foot">
+          <div><strong><span class="accent">Saved:</span> choices, reasons, tradeoffs, and revision.</strong></div>
+          <div><strong>Know what you picked, why, and what to review.</strong></div>
+        </footer>
+      </article>
+    </section>
+
+    <section class="boundary" aria-label="Product scope">
+      <div>
+        <span class="boundary-mark">!</span>
+        <p class="boundary-text">It <strong>plans the start.</strong> It does not build your app or watch your code.</p>
+      </div>
+      <div>
+        <p class="boundary-cn">它只规划怎么开工，不替你生成应用，也不会在后台盯着代码。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
